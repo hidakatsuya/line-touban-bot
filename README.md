@@ -1,7 +1,7 @@
 # LINE Touban Bot
 
-A LINE bot to notify the duty to run on Cloudflare Workers.
+A LINE bot to notify Touban(当番).
 
 ## License
 
-This project is licensed under the MIT License
+This project is licensed under the [MIT License](https://opensource.org/license/mit/).
