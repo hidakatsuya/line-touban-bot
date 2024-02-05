@@ -117,5 +117,9 @@ export async function parseLineWebhookRequest(
     );
   });
 
+  if (events.length === 0) {
+    console.log("No valid events", body);
+  }
+
   return events;
 }
