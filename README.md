@@ -1,6 +1,6 @@
-# LINE Touban Bot
+# 当番bot
 
-A LINE bot to notify Touban(当番).
+Cloudflare Workers で動作する今日の当番を教えてくれる LINE ボット
 
 ## License
 
