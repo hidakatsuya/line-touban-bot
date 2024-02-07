@@ -27,7 +27,8 @@ export interface ToubanConfig {
 }
 
 export class Touban {
-  private replayTemplate = replyTemplate`${"when"}の当番は ${"member"} です。`;
+  private replayTemplate =
+    replyTemplate`${"when"}の${"touban"}は\n「${"member"}」です。`;
 
   private config: ToubanConfig;
   private members: LineMember[];
@@ -40,6 +41,7 @@ export class Touban {
   get today(): string {
     return this.replayTemplate({
       when: "今日",
+      touban: this.config.name,
       member: this.getToubanAt(0).name,
     });
   }
@@ -47,6 +49,7 @@ export class Touban {
   get tomorrow(): string {
     return this.replayTemplate({
       when: "明日",
+      touban: this.config.name,
       member: this.getToubanAt(1).name,
     });
   }
