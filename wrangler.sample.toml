@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 TOUBAN_NAME = "XX当番"
-TOUBAN_MEMEBERS = "メンバー1,メンバー2,メンバー3"
+TOUBAN_MEMBERS = "メンバー1,メンバー2,メンバー3"
 TOUBAN_DESCRIPTION = "<当番の説明>"
 
 [triggers]

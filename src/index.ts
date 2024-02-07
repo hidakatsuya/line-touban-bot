@@ -6,10 +6,6 @@ import {
 import { LineClient, LineMember, parseLineWebhookRequest } from "./line";
 import { Touban } from "./touban";
 
-function buildToubanMembers(familyMembers: string): LineMember[] {
-  return familyMembers.split(",").map((name) => new LineMember(name));
-}
-
 function buildTouban({
   members,
   name,
