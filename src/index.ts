@@ -10,34 +10,38 @@ function buildToubanMembers(familyMembers: string): LineMember[] {
   return familyMembers.split(",").map((name) => new LineMember(name));
 }
 
+function buildTouban({
+  members,
+  name,
+  description,
+}: { members: string; name: string; description: string }): Touban {
+  const toubanMembers = members.split(",").map((name) => new LineMember(name));
+  return new Touban(toubanMembers, { name, description });
+}
+
 async function replyTouban(
   client: LineClient,
-  members: LineMember[],
   message: string,
+  touban: Touban,
   replyToken: string,
 ) {
-  const touban = new Touban(members);
-
   switch (message) {
     case "今日の当番は？":
-      await client.reply(
-        `今日の当番は ${touban.today.name} です。`,
-        replyToken,
-      );
+      await client.reply(touban.today, replyToken);
       break;
     case "明日の当番は？":
-      await client.reply(
-        `明日の当番は ${touban.tomorrow.name} です。`,
-        replyToken,
-      );
+      await client.reply(touban.tomorrow, replyToken);
+      break;
+    case "当番？":
+      await client.reply(touban.description, replyToken);
       break;
   }
 }
 
 async function notifyTouban(
   accessToken: string,
-  familyMembers: string,
   familyGroupId: string,
+  toubanConfig: { name: string; description: string; members: string },
 ) {
   console.log("notifyTouban: process start");
 
@@ -47,9 +51,9 @@ async function notifyTouban(
   }
 
   const client = new LineClient(accessToken);
-  const touban = new Touban(buildToubanMembers(familyMembers));
+  const touban = buildTouban(toubanConfig);
 
-  await client.push(`今日の当番は ${touban.today.name} です。`, familyGroupId);
+  await client.push(touban.today, familyGroupId);
 
   console.log("notifyTouban: processed");
 }
@@ -58,21 +62,20 @@ export interface Env {
   LINE_CHANNEL_SECRET: string;
   LINE_CHANNEL_ACCESS_TOKEN: string;
   FAMILY_GROUP_ID: string;
-  FAMILY_MEMBERS: string;
+  TOUBAN_NAME: string;
+  TOUBAN_DESCRIPTION: string;
+  TOUBAN_MEMBERS: string;
 }
 
 async function handleMessageEvent(
   client: LineClient,
-  members: LineMember[],
   messageEvents: LineMessageEvent[],
+  touban: Touban,
 ) {
   for (const { replyToken, message } of messageEvents) {
-    await replyTouban(
-      client,
-      members,
-      (<TextEventMessage>message).text,
-      replyToken,
-    );
+    const messageText = (message as TextEventMessage).text;
+
+    await replyTouban(client, messageText, touban, replyToken);
   }
 }
 
@@ -89,19 +92,29 @@ export default {
     }
 
     const client = new LineClient(env.LINE_CHANNEL_ACCESS_TOKEN);
-    const members = buildToubanMembers(env.FAMILY_MEMBERS);
+    const touban = buildTouban({
+      name: env.TOUBAN_NAME,
+      description: env.TOUBAN_DESCRIPTION,
+      members: env.TOUBAN_MEMBERS,
+    });
 
-    await handleMessageEvent(client, members, messageEvents);
+    await handleMessageEvent(client, messageEvents, touban);
 
     return new Response("OK");
   },
 
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    const toubanEnv = {
+      name: env.TOUBAN_NAME,
+      description: env.TOUBAN_DESCRIPTION,
+      members: env.TOUBAN_MEMBERS,
+    };
+
     ctx.waitUntil(
       notifyTouban(
         env.LINE_CHANNEL_ACCESS_TOKEN,
-        env.FAMILY_MEMBERS,
         env.FAMILY_GROUP_ID,
+        toubanEnv,
       ),
     );
   },
