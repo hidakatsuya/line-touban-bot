@@ -54,15 +54,6 @@ async function notifyTouban(
   console.log("notifyTouban: processed");
 }
 
-export interface Env {
-  LINE_CHANNEL_SECRET: string;
-  LINE_CHANNEL_ACCESS_TOKEN: string;
-  FAMILY_GROUP_ID: string;
-  TOUBAN_NAME: string;
-  TOUBAN_DESCRIPTION: string;
-  TOUBAN_MEMBERS: string;
-}
-
 async function handleMessageEvent(
   client: LineClient,
   messageEvents: LineMessageEvent[],
@@ -73,6 +64,15 @@ async function handleMessageEvent(
 
     await replyTouban(client, messageText, touban, replyToken);
   }
+}
+
+export interface Env {
+  LINE_CHANNEL_SECRET: string;
+  LINE_CHANNEL_ACCESS_TOKEN: string;
+  FAMILY_GROUP_ID: string;
+  TOUBAN_NAME: string;
+  TOUBAN_DESCRIPTION: string;
+  TOUBAN_MEMBERS: string;
 }
 
 export default {
