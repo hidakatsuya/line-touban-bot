@@ -1,6 +1,6 @@
 # LINE Touban Bot
 
-This is a Line bot for managing and notifying about a duty (Touban in Japanese) in a group.
+This is a LINE bot for managing and notifying about a duty (Touban in Japanese) in a group.
 
 ## Features
 
