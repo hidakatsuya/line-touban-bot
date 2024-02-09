@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import {
@@ -8,7 +9,7 @@ import {
   expect,
   test,
 } from "vitest";
-import { LineClient, LineMember } from "../src/line";
+import { LineClient, LineMember, parseLineWebhookRequest } from "../src/line";
 
 describe("LineMember", () => {
   test("name", () => {
@@ -17,22 +18,22 @@ describe("LineMember", () => {
   });
 });
 
-const server = setupServer();
-
-beforeEach(() => {
-  server.listen();
-});
-
-afterEach(() => {
-  server.resetHandlers();
-  server.events.removeAllListeners();
-});
-
-afterAll(() => {
-  server.close();
-});
-
 describe("LineClient", () => {
+  const server = setupServer();
+
+  beforeEach(() => {
+    server.listen();
+  });
+
+  afterEach(() => {
+    server.resetHandlers();
+    server.events.removeAllListeners();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
+
   test("reply", async () => {
     const handler = http.post(
       "https://api.line.me/v2/bot/message/reply",
@@ -127,5 +128,72 @@ describe("LineClient", () => {
     expect(async () => {
       await client.push("Hello", "USER_ID");
     }).rejects.toThrowError(/Failed to push:/);
+  });
+});
+
+describe("parseLineWebhookRequest", () => {
+  test("returns null when the request method is not POST", async () => {
+    const request = new Request("https://example.com", {
+      method: "GET",
+    });
+    const result = await parseLineWebhookRequest(
+      request,
+      "channelSecret",
+      "allowedGroupId",
+    );
+    expect(result).toBe(null);
+  });
+
+  test("returns null when the signature is invalid", async () => {
+    const request = new Request("https://example.com", {
+      method: "POST",
+      headers: {
+        "x-line-signature": "invalidSignature",
+      },
+      body: JSON.stringify({ events: [] }),
+    });
+    const result = await parseLineWebhookRequest(
+      request,
+      "channelSecret",
+      "allowedGroupId",
+    );
+    expect(result).toBe(null);
+  });
+
+  test("returns valid events when the signature is valid and the events are valid", async () => {
+    const channelSecret = "channelSecret";
+    const body = {
+      events: [
+        {
+          mode: "active",
+          type: "message",
+          source: {
+            type: "group",
+            groupId: "allowedGroupId",
+          },
+        },
+      ],
+    };
+    const signature = crypto
+      .createHmac("SHA256", channelSecret)
+      .update(JSON.stringify(body))
+      .digest("base64")
+      .toString();
+
+    const request = new Request("https://example.com", {
+      method: "POST",
+      headers: {
+        "x-line-signature": signature,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const result = await parseLineWebhookRequest(
+      request,
+      "channelSecret",
+      "allowedGroupId",
+    );
+
+    expect(result).toEqual(body.events);
   });
 });
