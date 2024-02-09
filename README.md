@@ -1,5 +1,7 @@
 # LINE Touban Bot
 
+[![Test](https://github.com/hidakatsuya/line-touban-bot/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/hidakatsuya/line-touban-bot/actions/workflows/test.yml)
+
 This is a LINE bot for managing and notifying about a duty (Touban in Japanese) in a group.
 
 ## Features
