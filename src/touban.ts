@@ -32,10 +32,16 @@ export class Touban {
 
   private config: ToubanConfig;
   private members: LineMember[];
+  private currentDate: Date;
 
-  constructor(members: LineMember[], config: ToubanConfig) {
+  constructor(
+    members: LineMember[],
+    config: ToubanConfig,
+    currentDate: Date = getTodayJSTDate(),
+  ) {
     this.members = members;
     this.config = config;
+    this.currentDate = currentDate;
   }
 
   get today(): string {
@@ -59,9 +65,7 @@ export class Touban {
   }
 
   private getToubanAt(dayAdd: number): LineMember {
-    const today = getTodayJSTDate();
-    const day = today.getDate() + dayAdd;
-    console.log("today", today);
+    const day = this.currentDate.getDate() + dayAdd;
     return this.members[day % this.members.length];
   }
 }
