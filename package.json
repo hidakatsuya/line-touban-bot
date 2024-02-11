@@ -13,6 +13,6 @@
     "msw": "^2.1.7",
     "typescript": "^5.0.4",
     "vitest": "^1.2.2",
-    "wrangler": "^3.26.0"
+    "wrangler": "^3.28.1"
   }
 }
