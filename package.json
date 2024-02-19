@@ -10,7 +10,7 @@
     "@cloudflare/workers-types": "^4.20240208.0",
     "@line/bot-sdk": "^8.4.0",
     "@types/node": "^20.11.19",
-    "msw": "^2.2.0",
+    "msw": "^2.2.1",
     "typescript": "^5.0.4",
     "vitest": "^1.2.2",
     "wrangler": "^3.28.2"
