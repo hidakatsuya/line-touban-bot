@@ -6,7 +6,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.5.3",
+    "@biomejs/biome": "1.6.1",
     "@cloudflare/workers-types": "^4.20240312.0",
     "@line/bot-sdk": "^8.4.1",
     "@types/node": "^20.11.26",
