@@ -9,4 +9,4 @@ TOUBAN_MEMBERS = "メンバー1,メンバー2,メンバー3"
 TOUBAN_DESCRIPTION = "<当番の説明>"
 
 [triggers]
-crons = ["0 22 * * *", "0 9 * * *"]
+crons = ["0 22 * * *"]
